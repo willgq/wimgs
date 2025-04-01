@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Barras com D3.js</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <svg width="600" height="400"></svg>
+    
+    <script>
+        const data = [10, 25, 40, 30, 15, 50, 35];
+        const svg = d3.select("svg");
+        const width = +svg.attr("width");
+        const height = +svg.attr("height");
+        const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+        
+        const x = d3.scaleBand()
+            .domain(data.map((d, i) => i))
+            .range([margin.left, width - margin.right])
+            .padding(0.1);
+        
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data)])
+            .nice()
+            .range([height - margin.bottom, margin.top]);
+        
+        svg.append("g")
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(x).tickFormat((d) => d + 1).tickSizeOuter(0));
+        
+        svg.append("g")
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(y));
+        
+        const bars = svg.selectAll("rect")
+            .data(data)
+            .enter().append("rect")
+            .attr("x", (d, i) => x(i))
+            .attr("y", height - margin.bottom)
+            .attr("width", x.bandwidth())
+            .attr("height", 0)
+            .attr("rx", 10)  // Bordas arredondadas
+            .attr("ry", 10)
+            .style("fill", "url(#gradient)")
+            .transition()
+            .duration(1000)
+            .attr("y", d => y(d))
+            .attr("height", d => height - margin.bottom - y(d));
+        
+        // Gradiente
+        const defs = svg.append("defs");
+        const gradient = defs.append("linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%")
+            .attr("x2", "0%")
+            .attr("y1", "100%")
+            .attr("y2", "0%");
+        
+        gradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#F4F4F4");
+        gradient.append("stop")
+            .attr("offset", "70%")
+            .attr("stop-color", "#003366");
+    </script>
+</body>
+</html>
