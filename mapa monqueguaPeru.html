@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa de Moquegua</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .map-container {
+      width: 100%;
+      padding: 10px;
+      position: relative;
+      height: 500px;
+    }
+    
+    /* Estilo para o card que aparece ao passar o mouse */
+    .info-card {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 20%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 100;
+      width: 300px;
+      text-align: left;
+      border: 2px solid #a02c2c;
+      pointer-events: none; /* Faz com que os eventos de mouse "passem através" do card */
+    }
+    
+    .info-card h2 {
+      color: #a02c2c;
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    
+    .tag {
+      background-color: #eeeeee;
+      color: #333333;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .info-row {
+      margin: 12px 0;
+    }
+    
+    .info-label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    /* Fazer o SVG interativo */
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    svg path {
+      cursor: pointer;
+      transition: fill 0.3s ease;
+    }
+    
+    svg path:hover {
+      fill: #cc3c3c !important;
+    }
+    
+    /* Centralizar o SVG dentro do container */
+    .svg-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mapa de Moquegua</h1>
+    
+    <div class="map-container" id="map-container">
+      <div class="svg-container">
+        <svg viewBox="3750 2920 300 250" id="mapa-svg">
+          <g id="Peru:Moquegua_Department_Simplified" style="fill:#a02c2c;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none">
+            <path
+              d="M3945 3043L3935 3045L3925 3035L3915 3045L3905 3075L3885 3095L3865 3115L3845 3130L3825 3095L3815 3085L3825 3070L3830 3060L3825 3050L3820 3040L3825 3030L3830 3025L3835 3020L3840 3005L3850 3000L3860 3000L3865 3000L3870 2995L3865 2990L3870 2985L3880 2975L3880 2965L3880 2955L3885 2950L3895 2960L3905 2955L3920 2960L3925 2970L3930 2985L3935 3000L3950 3015L3955 3020L3960 3020L3960 3025L3955 3030L3950 3035z"
+              fill="#a02c2c"
+              stroke="#ffffff"
+              stroke-width="5"
+              id="path68_simplified"
+              data-nome="Moquegua"
+              data-pais="Peru"
+              data-capital="Moquegua"
+              data-populacao="174,863"
+              data-area="15,734 km²" />
+          </g>
+        </svg>
+      </div>
+      
+      <!-- Card de informações -->
+      <div class="info-card" id="info-card">
+        <h2>Departamento de Moquegua</h2>
+        <div class="info-row">
+          <span class="info-label">País:</span>
+          <span id="info-pais">Peru</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Capital:</span>
+          <span id="info-capital">Moquegua</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">População:</span>
+          <span id="info-populacao">174,863</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Área:</span>
+          <span id="info-area">15,734 km²</span>
+        </div>
+        <div class="tag-container">
+          <div class="tag">Mineração</div>
+          <div class="tag">Agricultura</div>
+          <div class="tag">Vinícola</div>
+          <div class="tag">Montanhoso</div>
+          <div class="tag">Arqueológico</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Selecionar elementos
+    const path = document.getElementById('path68_simplified');
+    const infoCard = document.getElementById('info-card');
+    const infoPais = document.getElementById('info-pais');
+    const infoCapital = document.getElementById('info-capital');
+    const infoPopulacao = document.getElementById('info-populacao');
+    const infoArea = document.getElementById('info-area');
+    
+    // Mostrar card ao passar o mouse sobre o mapa
+    path.addEventListener('mouseenter', function() {
+      // Preencher o card com os dados do atributo data-*
+      infoPais.textContent = this.getAttribute('data-pais');
+      infoCapital.textContent = this.getAttribute('data-capital');
+      infoPopulacao.textContent = this.getAttribute('data-populacao');
+      infoArea.textContent = this.getAttribute('data-area');
+      
+      // Mostrar o card
+      infoCard.style.display = 'block';
+    });
+    
+    // Esconder o card quando o mouse sai do path
+    path.addEventListener('mouseleave', function() {
+      infoCard.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
